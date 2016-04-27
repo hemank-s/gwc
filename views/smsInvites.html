@@ -1,0 +1,29 @@
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'template/header.html'" data-ng-controller="headerCtrl as hctrl">
+</header>
+<section id="main">
+    <aside id="sidebar" data-ng-include="'template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }"></aside>
+    <aside id="chat" data-ng-include="'template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+    <section id="content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header ch-alt">
+                    <h2> Existing SMs invites </h2>
+                </div>
+                <div class="card-body card-padding">
+                    <table data-ng-controller="SMSInviteController">
+                        <tr ng-repeat="(key1, value1) in msg">
+                            <td style="border:1px solid black;">{{value1}}
+                                <span arr="{{value2}}" key="{{key1}}" ng-repeat="(key2,value2) in region"> 
+                          <span  ng-repeat="test in value2" ng-show="test == key1">  
+                            {{key2 | abbreviateRegion:allRegions}}
+                	 	 </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+<footer id="footer" data-ng-include="'template/footer.html'"></footer>

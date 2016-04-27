@@ -1,38 +1,38 @@
 <header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'template/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
-
 <section id="main">
     <aside id="sidebar" data-ng-include="'template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }"></aside>
-
     <aside id="chat" data-ng-include="'template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
-
     <section id="content">
-
         <div class="container">
             <div class="block-header">
                 <h2 style="text-align:center;">Welcome to the Growth Console</h2>
             </div>
-
-        <div class="col-sm-4"  data-ng-controller="TabsDemoCtrl">
-        <!-- Form -->
-        <div class="card">
-            <div class="card-header ch-alt">
-                <h2>Get EM Stats <small>ENTER MSISDN / GROUP OF MSISDN's / UPLOAD CSV</small></h2>
-            </div>
-
-            <div class="card-body card-padding">
-                
-                <div class="form-group fg-float m-b-30">
-                    <div class="fg-line">
-                        <input type="text" class="form-control input-sm">
-                        <label class="fg-label">MSISDN's</label>
+            <div class="col-sm-4" data-ng-controller="homeController">
+                <!-- Form -->
+                <div class="card">
+                    <div class="card-header ch-alt">
+                        <h2>Get EM Stats <small>ENTER MSISDN / GROUP OF MSISDN's / UPLOAD CSV</small></h2>
+                    </div>
+                    <div class="card-body card-padding">
+                        <div class="form-group fg-float m-b-30">
+                            <div class="fg-line">
+                                <input type="text" class="form-control input-sm">
+                                <label class="fg-label">MSISDN's</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-info">Submit</button>
                     </div>
                 </div>
-                <button class="btn btn-info">Submit</button>
+                <div class="card">
+                    <div class="card-header ch-alt">
+                        <h2>Change SMs invites </h2>
+                    </div>
+                    <div class="card-body card-padding">
+                        <button class="btn btn-info" ng-click="showListSmsInvites('smsInvites')">View</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>    
-</div>
     </section>
 </section>
-
 <footer id="footer" data-ng-include="'template/footer.html'"></footer>
