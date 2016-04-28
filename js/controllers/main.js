@@ -132,32 +132,21 @@ materialAdmin
 
 
     $scope.showModal = function(dataArr) {
-        // swal({
-        //     title: 'List of Apps',
-        //     text: dataArr.toString(),
-        //     type: 'basic',
-        //     showCancelButton: false,
-        //     confirmButtonColor: '#F44336 ',
-        //     confirmButtonText: 'OK',
-        //     closeOnConfirm: true
-        // }, function() {
 
-
-        // });
-
+        var i,j,temparray,chunk = 150;
+        for (i=0,j=dataArr.length; i<j; i+=chunk) {
+            temparray = dataArr.slice(i,i+chunk);
+            // do whatever
+        }
 
 
         swal({
             title: 'List of Apps',
-            text: dataArr.toString(),
+            text: temparray.toString()+ '   ' +(dataArr.length - temparray.length)+ '  more' ,
             html: true
         });
 
-    }
-
-
-
-
+    };
 }])
 
 
