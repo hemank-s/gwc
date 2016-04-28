@@ -5,16 +5,40 @@
     <aside id="chat" data-ng-include="'template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
     <section id="content">
         <div class="container">
+
+        <div class="row">
+                <div ng-repeat="(heading,data) in userStats" class="col-sm-3">
+                    <div class="mini-charts-item bgm-red">
+                        <div class="clearfix">
+                            <div class="chart stats-line" data-sparkline-line></div>
+                            <div class="count" style="padding:2px 12px;">
+                                <small>{{heading | capitalize}}</small>
+                                <h4 style="color:rgba(255,255,255,0.75);" ng-if="data.count >= 0">Count- {{data.count}}</h4>
+                                <h5 style="color:rgba(255,255,255,0.75);" ng-if="data.rec >= 0">Recd.- {{data.rec}}</h5>
+                                <h5 style="color:rgba(255,255,255,0.75);" ng-if="data.sent >= 0">Sent- {{data.sent}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-vmiddle">
-                            <tr ng-repeat="user in userList">
-                                <td data-title="'S.No'">
+                            <tr>
+                                <th>S.No.</th>
+                                <th>MSISDN</th>
+                                <th>STATUS</th>
+                            </tr>
+                            <tr ng-repeat="(phone, user) in userList" ng-click="displayUserStats(user)">
+                                <td data-title="'sno'">
                                     {{$index+1}}
                                 </td>
-                                <td data-title="'Msisdn'">
-                                    {{user}}
+                                <td data-title="'msisdn'">
+                                    {{phone}}
+                                </td>
+                                <td data-title="'status'">
+                                    {{user.stat}}
                                 </td>
                             </tr>
                         </table>

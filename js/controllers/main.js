@@ -95,13 +95,18 @@ materialAdmin
 //     console.log(data);
 // }])
 
-.controller('emStatController', ['name',function (name) {
+.controller('emStatController', ['name','$scope',function (name, $scope) {
     
     console.log("data received is from em stats fetch is :-");
     console.log(name);
-    console.log($scope);
-
+    
     $scope.userList = name;
+    $scope.displayUserStats = function(user){
+    
+        delete user.stat;
+        console.log(user);
+        $scope.userStats = user;
+    };
 
 
 }])
@@ -124,6 +129,22 @@ materialAdmin
 
         if ($scope.filePresent) {
             console.log('CSV file is present');
+            
+            formdata.append('batchSize', $scope.batchSize);
+
+            $http({
+                    method: 'POST',
+                    url: 'http://172.16.1.75/getstatsem',
+                    data: formdata, //forms user object
+                    headers: { 'Content-Type': undefined },
+                    transformRequest: angular.identity
+                })
+                .success(function(data) {
+                    console.log(data);
+                    $state.go('emresults', { name : data});
+                });
+
+
         } else {
             var userList = $scope.msisdn; // User List of msisdn's comma seperated
 
@@ -275,6 +296,12 @@ materialAdmin
 
     };
 
+})
+
+.filter('capitalize', function() {
+    return function(input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+    };
 })
 
 .filter('abbreviateRegion', function() {
