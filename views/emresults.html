@@ -5,17 +5,16 @@
     <aside id="chat" data-ng-include="'template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
     <section id="content">
         <div class="container">
-
-        <div class="row">
+            <div class="row">
                 <div ng-repeat="(heading,data) in userStats" class="col-sm-3">
                     <div class="mini-charts-item bgm-red">
                         <div class="clearfix">
                             <div class="chart stats-line" data-sparkline-line></div>
                             <div class="count" style="padding:2px 12px;">
                                 <small>{{heading | capitalize}}</small>
-                                <h4 style="color:rgba(255,255,255,0.75);" ng-if="data.count >= 0">Count- {{data.count}}</h4>
-                                <h5 style="color:rgba(255,255,255,0.75);" ng-if="data.rec >= 0">Recd.- {{data.rec}}</h5>
-                                <h5 style="color:rgba(255,255,255,0.75);" ng-if="data.sent >= 0">Sent- {{data.sent}}</h5>
+                                <h4 style="color:rgba(255,255,255,0.75);" ng-if="data.count >= 0">Count: {{data.count}}</h4>
+                                <h5 style="color:rgba(255,255,255,0.75);" ng-if="data.rec >= 0">Recd: {{data.rec}}</h5>
+                                <h5 style="color:rgba(255,255,255,0.75);" ng-if="data.sent >= 0">Sent: {{data.sent}}</h5>
                             </div>
                         </div>
                     </div>
@@ -48,4 +47,4 @@
         </div>
     </section>
 </section>
-<footer id=" footer " data-ng-include=" 'template/footer.html' "></footer>
+<footer id=" footer " data-ng-include=" 'template/footer.html' " style="text-align:center;"></footer>

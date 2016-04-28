@@ -14801,6 +14801,19 @@ body.login-content:before {
   padding-left: 6px;
   padding-right: 6px;
 }
+.headingCustom {
+  font-weight: bolder;
+  font-size: 14px;
+}
+.fontSize14 {
+  font-size: 14px;
+}
+.boldFont {
+  font-weight: bolder;
+}
+.dash-widget-item {
+  min-height: 300px;
+}
 /*
  * Vendor Overrides
  */

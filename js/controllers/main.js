@@ -7,7 +7,7 @@ materialAdmin
     .controller('materialadminCtrl', function($timeout, $state, $scope, growlService) {
 
     //Welcome Message
-    growlService.growl('Welcome back Hiker !', 'inverse');
+    growlService.growl('Welcome back Sandeep !', 'inverse');
 
     // Detact Mobile Browser
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -140,19 +140,25 @@ materialAdmin
             // do whatever
         }
 
-
         swal({
             title: 'List of Apps',
             text: temparray.toString() + '   ' + (dataArr.length - temparray.length) + '  more',
             html: true
         });
 
-
-        $scope.showPhoneLogs = function(dataArr) {
-            $scope.showCards = true;
-            $scope.appData = dataArr;
-        }
     }
+
+    $scope.showPhoneLogs = function(dataArr) {
+        $scope.showCards = true;
+        $scope.appData = dataArr;
+    }
+
+    $scope.checkStatName = function(statName) {
+        if (statName == 'date' || statName == 'elapsedTime' || statName == 'isAutoTimeSet')
+            return false;
+        return true;
+    }
+
 
 }])
 
@@ -181,22 +187,22 @@ materialAdmin
 
             $http({
                     method: 'POST',
-                    url: 'http://172.16.1.75/getstatsem',
+                    url: 'http://staging.jinx.hike.in/getstatsem',
                     data: formdata, //forms user object
                     headers: { 'Content-Type': undefined },
                     transformRequest: angular.identity
                 })
                 .success(function(data) {
                     console.log(data);
-                    if(data.stat == "ok"){
+                    if (data.stat == "ok") {
                         $scope.msisdn = '';
                         $state.go('emresults', { name: data.data });
 
-                    }else{
+                    } else {
                         $scope.msisdn = '';
                         growlService.growl('Some error occured while fetching records, try again later!', 'danger');
                     }
-                    
+
                 });
 
 
@@ -209,17 +215,17 @@ materialAdmin
             console.log('File is not Present');
             $http({
                     method: 'POST',
-                    url: 'http://172.16.1.75/getstatsem',
+                    url: 'http://staging.jinx.hike.in/getstatsem',
                     data: $.param(formDataToSend), //forms user object
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 })
                 .success(function(data) {
                     console.log(data);
-                    if(data.stat == "ok"){
+                    if (data.stat == "ok") {
                         $scope.msisdn = '';
                         $state.go('emresults', { name: data.data });
 
-                    }else{
+                    } else {
                         $scope.msisdn = '';
                         growlService.growl('Some error occured while fetching records, try again later!', 'danger');
                     }
@@ -243,7 +249,6 @@ materialAdmin
     // Fetch logs
 
     $scope.fetchLogs = function() {
-        $scope.msisdn = "911151151151";
         console.log('Fetching logs for the user');
 
         var url = '';
@@ -260,7 +265,7 @@ materialAdmin
         else if ($scope.logType == "al")
             url = "/getApps";
 
-        url = "http://172.16.1.75" + url;
+        url = "http://staging.jinx.hike.in" + url;
 
 
         if ($scope.filePresent) {
@@ -346,7 +351,7 @@ materialAdmin
 
             $http({
                     method: 'POST',
-                    url: 'http://172.16.1.75/refreshLogs',
+                    url: 'http://staging.jinx.hike.in/refreshLogs',
                     data: formdata, //forms user object
                     headers: { 'Content-Type': undefined },
                     transformRequest: angular.identity
@@ -397,7 +402,7 @@ materialAdmin
 
             $http({
                     method: 'POST',
-                    url: 'http://172.16.1.75/refreshLogs',
+                    url: 'http://staging.jinx.hike.in/refreshLogs',
                     data: $.param(formDataToSend), //forms user object
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 })
@@ -478,7 +483,7 @@ materialAdmin
 
     $scope.disabledSubmit = true;
 
-    $http.get('http://172.16.1.75/getSmsInvite').then(function(response) {
+    $http.get('http://staging.jinx.hike.in/getSmsInvite').then(function(response) {
 
         console.log(response);
 
@@ -571,7 +576,7 @@ materialAdmin
         dataToSend.msg = $scope.msg;
         dataToSend.region = $scope.region;
         dataToSend = { 'message': dataToSend };
-        $http.post('http://172.16.1.75/postSmsInvite', dataToSend).then(function(response) {
+        $http.post('http://staging.jinx.hike.in/postSmsInvite', dataToSend).then(function(response) {
             if (response.data.stat == "ok")
                 growlService.growl('Successfully saved!', 'success');
             else

@@ -31,20 +31,17 @@
                         </table>
                         <table class="table table-striped table-vmiddle" ng-if="logType == 'pl'">
                             <tr ng-show="showCards == true">
-                                <div class="col-md-3 col-sm-6" ng-repeat="(statName,statArr) in appData" ng-show="statName!='date' || statName!='elapsedTime' || statName!='isAutoTimeSet' ">
-                                    <div id="site-visits" class="dash-widget-item bgm-teal">
-                                        <div class="dash-widget-header">
+                                <div class="col-md-3 col-sm-3" ng-repeat="(statName,statArr) in appData" ng-show="checkStatName(statName)">
+                                    <div id="site-visits" class="dash-widget-item bgm-teal" style="min-height:290px;">
+                                        <div class="dash-widget-header" style="padding-bottom:2px;">
                                             <div class="p-20">
-                                                <div class="dash-widget-visits" data-sparkline-line="">
-                                                    <canvas width="201" height="95" style="display: inline-block; width: 201px; height: 95px; vertical-align: top;"></canvas>
-                                                </div>
                                             </div>
-                                            <div class="dash-widget-title">{{statName}}</div>
+                                            <div class="dash-widget-title f-14 boldFont"><strong>{{statName}}</strong></div>
                                         </div>
                                         <div class="p-20">
                                             <div ng-repeat="(key,value) in statArr">
-                                                <small>{{key}}</small>
-                                                <h3 class="m-0 f-400">{{value}}</h3>
+                                                <small class="f-14"><strong>{{key}}</strong></small>
+                                                <h3 class="m-0 f-400 f-14">{{value}}</h3>
                                                 <br>
                                             </div>
                                         </div>
@@ -94,4 +91,4 @@
         </div>
     </section>
 </section>
-<footer id=" footer " data-ng-include=" 'template/footer.html' "></footer>
+<footer id=" footer " data-ng-include=" 'template/footer.html' " style="text-align:center;"></footer>
