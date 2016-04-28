@@ -21,7 +21,7 @@ materialAdmin
                                 'vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js',
                                 'vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js'
                             ]
-                        }])
+                        }]);
                     }
                 }
             })
@@ -48,7 +48,7 @@ materialAdmin
 
         .state('typography', {
             url: '/typography',
-            templateUrl: 'views/typography.html'        })
+            templateUrl: 'views/typography.html'})
 
         .state('widgets', {
             url: '/widgets',
@@ -58,6 +58,19 @@ materialAdmin
         .state('smsInvites', {
             url: '/smsInvites',
             templateUrl: 'views/smsInvites.html'
+        })
+
+        // EM Results Route
+        .state('emresults', {
+            url: '/emresults',
+            params: {'name': null},
+            templateUrl: 'views/emresults.html',
+            controller: 'emStatController',
+            resolve: {
+                        name: ['$stateParams', function($stateParams) {
+                            return $stateParams.name;
+                        }]
+                    }    
         })
 
         .state('widgets.widgets', {
@@ -77,7 +90,7 @@ materialAdmin
                             'vendors/bower_components/mediaelement/build/mediaelement-and-player.js',
                             'vendors/bower_components/autosize/dist/autosize.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -117,7 +130,7 @@ materialAdmin
                         files: [
                             'vendors/bower_components/autosize/dist/autosize.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -150,7 +163,7 @@ materialAdmin
                             'vendors/bower_components/angular-chosen-localytics/chosen.js',
                             'vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -238,7 +251,7 @@ materialAdmin
                             'vendors/bower_components/mediaelement/build/mediaelement-and-player.js',
                             'vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -269,7 +282,7 @@ materialAdmin
                                 'vendors/sparklines/jquery.sparkline.min.js',
                                 'vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js',
                             ]
-                        }])
+                        }]);
                     }
                 }
             })
@@ -290,7 +303,7 @@ materialAdmin
                                 'vendors/bower_components/moment/min/moment.min.js',
                                 'vendors/bower_components/fullcalendar/dist/fullcalendar.min.js'
                             ]
-                        }])
+                        }]);
                     }
                 }
             })
@@ -311,7 +324,7 @@ materialAdmin
                         files: [
                             'vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -362,7 +375,7 @@ materialAdmin
                         files: [
                             'vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -383,7 +396,7 @@ materialAdmin
                         files: [
                             'vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -436,7 +449,7 @@ materialAdmin
                             'vendors/bower_components/mediaelement/build/mediaelement-and-player.js',
                             'vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js'
                         ]
-                    }])
+                    }]);
                 }
             }
         })
@@ -444,5 +457,5 @@ materialAdmin
         .state('breadcrumb-demo', {
             url: '/breadcrumb-demo',
             templateUrl: 'views/breadcrumb-demo.html'
-        })
+        });
     });

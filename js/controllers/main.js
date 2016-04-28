@@ -86,13 +86,68 @@ materialAdmin
     };
 }])
 
-.controller('homeController', function($scope, $location, $http, growlService) {
+
+// .controller('emStatController', function($scope, $http) {
+//   console.log("HEllo Hemank");
+//})
+
+// .controller('emStatController', ['data',function ($scope, $http, data) {
+//     console.log(data);
+// }])
+
+.controller('emStatController', ['name',function (name) {
+    
+    console.log("data received is from em stats fetch is :-");
+    console.log(name);
+    console.log($scope);
+
+    $scope.userList = name;
+
+
+}])
+
+
+.controller('homeController', function($scope, $location, $http, growlService, $state) {
 
     var formdata = new FormData(); // Form Data For CSV upload
     $scope.filePresent = false;
 
     $scope.showListSmsInvites = function(route) {
         $location.path(route);
+    };
+
+    // Show Em stats here
+    $scope.getEmStats = function() {
+        console.log($scope.filePresent);
+        console.log($scope.msisdn);
+        console.log($scope.batchSize);
+
+        if ($scope.filePresent) {
+            console.log('CSV file is present');
+        } else {
+            var userList = $scope.msisdn; // User List of msisdn's comma seperated
+
+            var formDataToSend = {};
+
+            formDataToSend.userList = userList;
+            console.log('File is not Present');
+            $http({
+                    method: 'POST',
+                    url: 'http://172.16.1.75/getstatsem',
+                    data: $.param(formDataToSend), //forms user object
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                .success(function(data) {
+                    $state.go('emresults', { name : data});
+                    // if (data.stat == 'ok') {
+                    //     $scope.msisdn = '';
+                    //     growlService.growl('Data received Successfully !', 'success');
+                    // } else {
+                    //     $scope.msisdn = '';
+                    //     growlService.growl('Some error occured while fetching records, try again later!', 'danger');
+                    // }
+                });
+        }
     };
 
     // GET THE FILES LIST FROM THE SELECT FILE OPTION
@@ -102,6 +157,7 @@ materialAdmin
         angular.forEach($files, function(value, key) {
             formdata.append('csv', value);
         });
+
         // Set the File Present as True/False Depending on the Form data has been picked or not
         $scope.filePresent = true;
     };
@@ -112,6 +168,7 @@ materialAdmin
 
         if ((!$scope.al && !$scope.ll && !$scope.pl && !$scope.cl)) {
             growlService.growl('Please select at least one log !', 'danger');
+            return;
         }
 
         if ($scope.al)
@@ -136,7 +193,6 @@ materialAdmin
             if ($scope.cl)
                 formdata.append('cl', true);
 
-
             $http({
                     method: 'POST',
                     url: 'http://172.16.1.75/refreshLogs',
@@ -152,6 +208,7 @@ materialAdmin
                         $scope.cl = false;
                         $scope.pl = false;
                         $scope.msisdn = '';
+                        $scope.filePresent = false;
 
                         growlService.growl('Successfully sent your packet !', 'success');
                     } else {
@@ -230,7 +287,6 @@ materialAdmin
 
 .controller('SMSInviteController', function($scope, $http) {
 
-
     $scope.editFlags = [];
 
     $http.get('http://172.16.1.75/getSmsInvite').then(function(response) {
@@ -244,44 +300,41 @@ materialAdmin
 
         });
 
-
         console.log($scope.editFlags);
 
     }, function() {
         alert('Something went wrong');
     });
 
-
     $scope.allRegions = {
 
-        "AP": "Andhra Pradesh ",
-        "AS": "Assam",
-        "BR": "Bihar and Jharkhand",
-        "DL": "Delhi NCR",
-        "GJ": "Gujarat ",
-        "HP": "Himachal Pradesh",
-        "HR": "Haryana ",
-        "JK": "Jammu and Kashmir ",
-        "KL": "Kerala ",
-        "KA": "Karnataka",
-        "KO": "Kolkata ",
-        "MH": "Maharashtra",
-        "MP": "Madhya Pradesh and Chhattisgarh ",
-        "MU": "Mumbai",
-        "NE": "North East India ",
-        "OR": "Odisha",
-        "PB": "Punjab",
-        "RJ": "Rajasthan",
-        "TN": "Tamil Nadu",
-        "UE": "Uttar Pradesh(East)",
-        "UW": "Uttar Pradesh(West)",
-        "WB": "West",
-        "NON_IND": "Non India",
-        "IND": "India",
-        "CH": "Chennai"
+        'AP': 'Andhra Pradesh ',
+        'AS': 'Assam',
+        'BR': 'Bihar and Jharkhand',
+        'DL': 'Delhi NCR',
+        'GJ': 'Gujarat ',
+        'HP': 'Himachal Pradesh',
+        'HR': 'Haryana ',
+        'JK': 'Jammu and Kashmir ',
+        'KL': 'Kerala ',
+        'KA': 'Karnataka',
+        'KO': 'Kolkata ',
+        'MH': 'Maharashtra',
+        'MP': 'Madhya Pradesh and Chhattisgarh ',
+        'MU': 'Mumbai',
+        'NE': 'North East India ',
+        'OR': 'Odisha',
+        'PB': 'Punjab',
+        'RJ': 'Rajasthan',
+        'TN': 'Tamil Nadu',
+        'UE': 'Uttar Pradesh(East)',
+        'UW': 'Uttar Pradesh(West)',
+        'WB': 'West',
+        'NON_IND': 'Non India',
+        'IND': 'India',
+        'CH': 'Chennai'
 
     };
-
 
     $scope.linkRegion = function(messageId, regionPrefix) {
 
@@ -292,7 +345,6 @@ materialAdmin
         }
 
     };
-
 
     $scope.unlinkRegion = function(messageId, regionPrefix) {
 
@@ -318,7 +370,6 @@ materialAdmin
         return max;
     };
 
-
     $scope.delete = function(messageId) {
         var index;
         delete $scope.msg[messageId];
@@ -329,7 +380,6 @@ materialAdmin
                 value.splice(index, 1);
         });
     };
-
 
     $scope.changeMessage = function(messageId, message) {
 
@@ -344,8 +394,7 @@ materialAdmin
         dataToSend.msg = $scope.msg;
         dataToSend.region = $scope.region;
 
-        dataToSend = { "message": dataToSend };
-
+        dataToSend = { 'message': dataToSend };
 
         console.log(dataToSend);
 
@@ -356,7 +405,6 @@ materialAdmin
         }, function() {
             alert('Something went wrong');
         });
-
 
     };
 
