@@ -8,7 +8,8 @@
                 <h2 style="text-align:center;">Welcome to the Growth Console</h2>
             </div>
             <div class="col-sm-4" data-ng-controller="homeController">
-                <!-- Form -->
+                
+                <!-- EM STATS CARD -->
                 <div class="card">
                     <div class="card-header ch-alt">
                         <h2>Get EM Stats <small>ENTER MSISDN / GROUP OF MSISDN's / UPLOAD CSV</small></h2>
@@ -23,6 +24,9 @@
                         <button class="btn btn-info">Submit</button>
                     </div>
                 </div>
+
+                <!-- Change SMS Invites -->
+
                 <div class="card">
                     <div class="card-header ch-alt">
                         <h2>Change SMs invites </h2>
@@ -31,6 +35,61 @@
                         <button class="btn btn-info" ng-click="showListSmsInvites('smsInvites')">View</button>
                     </div>
                 </div>
+
+
+                <!-- Refresh The Logs Card -->
+
+                <div class="card">
+
+                    <div class="card-header ch-alt">
+                        <h2>Refresh Logs <small>ENTER MSISDN / GROUP OF MSISDN's / UPLOAD CSV</small></h2>
+                    </div>
+                    <div class="card-body card-padding">
+                        <form name="refreshLogForm" ng-submit="submitRefreshLogs()">
+
+                            <input type="file" name="csv" ng-files="getTheFiles($files)" style="margin: 0px auto;width: 55%;">
+                            <input type="number" ng-model="batchSize"/>
+                                <hr noshade>
+                                <div style="text-align:center;">
+                                    OR
+                                </div>
+                            <br><br>
+
+                            <div class="form-group fg-float m-b-30">
+                                <div class="fg-line">
+                                    <input type="text" ng-model="msisdn" class="form-control input-sm">
+                                    <label class="fg-label">MSISDN's</label>
+                                </div>
+                            </div>
+
+
+                            
+                            <label class="checkbox checkbox-inline m-r-20">
+                                <input type="checkbox" value="option1" ng-model="al">
+                                <i class="input-helper"></i>
+                                Application Logs
+                            </label>
+                            <label class="checkbox checkbox-inline m-r-20">
+                                <input type="checkbox" value="option3" ng-model="ll">
+                                <i class="input-helper"></i>
+                                Location Logs
+                            </label>
+                            <br></br>
+                            <label class="checkbox checkbox-inline m-r-20">
+                                <input type="checkbox" value="option2" ng-model="cl">
+                                <i class="input-helper"></i>
+                                Call Logs
+                            </label>
+                            <label class="checkbox checkbox-inline m-r-20">
+                                <input type="checkbox" value="option3" ng-model="pl">
+                                <i class="input-helper"></i>
+                                Phone Logs
+                            </label>
+                            <button class="btn btn-info" id="submit" style="margin-top:20px;">Send Packet</button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>

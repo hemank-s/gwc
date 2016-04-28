@@ -248,6 +248,11 @@ materialAdmin
             }
         ];
 
+
+        this.submitForm = function(){
+            console.log("Submitting form");
+        }
+
     })
 
     

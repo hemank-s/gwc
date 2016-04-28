@@ -1,12 +1,13 @@
 materialAdmin
+
 // =========================================================================
 // Base controller for common functions
 // =========================================================================
 
     .controller('materialadminCtrl', function($timeout, $state, $scope, growlService) {
-    //Welcome Message
-    growlService.growl('Welcome back Mallinda!', 'inverse')
 
+    //Welcome Message
+    growlService.growl('Welcome back Hiker !', 'inverse');
 
     // Detact Mobile Browser
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -17,7 +18,7 @@ materialAdmin
     this.sidebarToggle = {
         left: false,
         right: false
-    }
+    };
 
     // By default template has a boxed layout
     this.layoutType = localStorage.getItem('ma-layout-status');
@@ -32,14 +33,14 @@ materialAdmin
         if (!angular.element(event.target).parent().hasClass('active')) {
             this.sidebarToggle.left = false;
         }
-    }
+    };
 
     //Listview Search (Check listview pages)
     this.listviewSearchStat = false;
 
     this.lvSearch = function() {
         this.listviewSearchStat = true;
-    }
+    };
 
     //Listview menu toggle in small screens
     this.lvMenuStat = false;
@@ -63,23 +64,160 @@ materialAdmin
         'orange',
         'blue',
         'purple'
-    ]
+    ];
 
     this.skinSwitch = function(color) {
         this.currentSkin = color;
-    }
+    };
 
 })
 
+.directive('ngFiles', ['$parse', function($parse) {
 
+    function fn_link(scope, element, attrs) {
+        var onChange = $parse(attrs.ngFiles);
+        element.on('change', function(event) {
+            onChange(scope, { $files: event.target.files });
+        });
+    }
 
-/*    EM Stats Controller   */
+    return {
+        link: fn_link
+    };
+}])
 
-.controller('homeController', function($scope, $location, $http) {
+.controller('homeController', function($scope, $location, $http, growlService) {
+
+    var formdata = new FormData(); // Form Data For CSV upload
+    $scope.filePresent = false;
 
     $scope.showListSmsInvites = function(route) {
         $location.path(route);
-    }
+    };
+
+    // GET THE FILES LIST FROM THE SELECT FILE OPTION
+
+    $scope.getTheFiles = function($files) {
+        console.log($files);
+        angular.forEach($files, function(value, key) {
+            formdata.append('csv', value);
+        });
+        // Set the File Present as True/False Depending on the Form data has been picked or not
+        $scope.filePresent = true;
+    };
+
+    // Submit The Refresh File Logs Here
+    $scope.submitRefreshLogs = function() {
+        console.log('Submiting the refresh logs for the user');
+
+        if ((!$scope.al && !$scope.ll && !$scope.pl && !$scope.cl)) {
+            growlService.growl('Please select at least one log !', 'danger');
+        }
+
+        if ($scope.al)
+            var al = $scope.al; // application logs
+        if ($scope.ll)
+            var ll = $scope.ll; // Location Logs
+        if ($scope.pl)
+            var pl = $scope.pl; // Phone Logs
+        if ($scope.cl)
+            var cl = $scope.cl; // Call Logs
+
+        if ($scope.filePresent) {
+
+            formdata.append('batchSize', $scope.batchSize);
+
+            if ($scope.al)
+                formdata.append('al', true);
+            if ($scope.ll)
+                formdata.append('ll', true);
+            if ($scope.pl)
+                formdata.append('pl', true);
+            if ($scope.cl)
+                formdata.append('cl', true);
+
+
+            $http({
+                    method: 'POST',
+                    url: 'http://172.16.1.75/refreshLogs',
+                    data: formdata, //forms user object
+                    headers: { 'Content-Type': undefined },
+                    transformRequest: angular.identity
+                })
+                .success(function(data) {
+                    console.log(data);
+                    if (data.stat == 'ok') {
+                        $scope.al = false;
+                        $scope.ll = false;
+                        $scope.cl = false;
+                        $scope.pl = false;
+                        $scope.msisdn = '';
+
+                        growlService.growl('Successfully sent your packet !', 'success');
+                    } else {
+                        $scope.al = false;
+                        $scope.ll = false;
+                        $scope.cl = false;
+                        $scope.pl = false;
+                        $scope.msisdn = '';
+
+                        growlService.growl('Error sending your packet, try again !', 'danger');
+                    }
+                });
+
+        } else {
+            if (!$scope.msisdn) {
+                console.log('Msisdn/Select boxes are empty :: Getting Back');
+                growlService.growl('Please fill all the fields !', 'danger');
+                return;
+            }
+
+            var userList = $scope.msisdn; // User List of msisdn's comma seperated
+
+            var formDataToSend = {};
+
+            formDataToSend.userList = userList;
+
+            if (al)
+                formDataToSend.al = true;
+            if (ll)
+                formDataToSend.ll = true;
+            if (cl)
+                formDataToSend.cl = true;
+            if (pl)
+                formDataToSend.pl = true;
+
+            $http({
+                    method: 'POST',
+                    url: 'http://172.16.1.75/refreshLogs',
+                    data: $.param(formDataToSend), //forms user object
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                .success(function(data) {
+                    console.log(data);
+                    if (data.stat == 'ok') {
+                        $scope.al = false;
+                        $scope.ll = false;
+                        $scope.cl = false;
+                        $scope.pl = false;
+                        $scope.msisdn = '';
+
+                        growlService.growl('Successfully sent your packet !', 'success');
+                    } else {
+                        $scope.al = false;
+                        $scope.ll = false;
+                        $scope.cl = false;
+                        $scope.pl = false;
+                        $scope.msisdn = '';
+
+                        growlService.growl('Error sending your packet, try again !', 'danger');
+                    }
+                });
+
+        }
+
+    };
+
 })
 
 .filter('abbreviateRegion', function() {
@@ -87,7 +225,7 @@ materialAdmin
         input = allRegions[input];
         return input;
 
-    }
+    };
 })
 
 .controller('SMSInviteController', function($scope, $http) {
@@ -109,11 +247,9 @@ materialAdmin
 
         console.log($scope.editFlags);
 
-
     }, function() {
-        alert('Something went wrong')
+        alert('Something went wrong');
     });
-
 
 
     $scope.allRegions = {
@@ -150,19 +286,19 @@ materialAdmin
     $scope.linkRegion = function(messageId, regionPrefix) {
 
         if (angular.isArray($scope.region[regionPrefix]))
-            $scope.region[regionPrefix].push(messageId)
+            $scope.region[regionPrefix].push(messageId);
         else {
             $scope.region[regionPrefix] = [messageId];
         }
 
-    }
+    };
 
 
     $scope.unlinkRegion = function(messageId, regionPrefix) {
 
         var index = $scope.region[regionPrefix].indexOf(messageId);
         $scope.region[regionPrefix].splice(index, 1);
-    }
+    };
 
     $scope.addMessage = function() {
 
@@ -170,7 +306,7 @@ materialAdmin
         $scope.msg[messageId] = '';
         $scope.editFlags[messageId] = true;
 
-    }
+    };
 
     $scope.findMax = function(arr) {
 
@@ -180,7 +316,7 @@ materialAdmin
                 max = parseInt(arr[i]);
 
         return max;
-    }
+    };
 
 
     $scope.delete = function(messageId) {
@@ -192,7 +328,7 @@ materialAdmin
             if (index != -1)
                 value.splice(index, 1);
         });
-    }
+    };
 
 
     $scope.changeMessage = function(messageId, message) {
@@ -200,7 +336,7 @@ materialAdmin
         $scope.editFlags[messageId] = false;
         $scope.msg[messageId] = message;
 
-    }
+    };
 
     $scope.submit = function(messageId) {
         var dataToSend = {};
@@ -218,22 +354,18 @@ materialAdmin
             console.log(response);
 
         }, function() {
-            alert('Something went wrong')
+            alert('Something went wrong');
         });
 
 
-    }
+    };
 
 })
-
-
-
 
 // =========================================================================
 // Header
 // =========================================================================
 .controller('headerCtrl', function($timeout, messageService) {
-
 
     // Top Search
     this.openSearch = function() {
@@ -251,7 +383,6 @@ materialAdmin
     this.user = messageService.text;
 
     this.messageResult = messageService.getMessage(this.img, this.user, this.text);
-
 
     //Clear Notification
     this.clearNotification = function($event) {
@@ -282,39 +413,40 @@ materialAdmin
     }
 
     this.submitForm = function() {
-        console.log("Submitting form");
+        console.log('Submitting form');
     }
 
-    // Open the Web Client From Within The Growth Console 
+    // Open the Web Client From Within The Growth Console
 
     this.openWebClient = function() {
         swal({
-            title: "Are you sure?",
-            text: "You will navigate to another window",
-            type: "warning",
+            title: 'Are you sure?',
+            text: 'You will navigate to another window',
+            type: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#F44336",
-            confirmButtonText: "Yes,Hike Web !",
+            confirmButtonColor: '#F44336',
+            confirmButtonText: 'Yes,Hike Web !',
             closeOnConfirm: false
         }, function() {
-            window.open("http://54.254.187.77:9090/");
-            //swal("Done!", "localStorage is cleared", "success"); 
+            window.open('http://54.254.187.77:9090/');
+
+            //swal("Done!", "localStorage is cleared", "success");
         });
     }
 
-    // Log out From Console 
+    // Log out From Console
 
     this.logOutFromConsole = function() {
         swal({
-            title: "Are you sure?",
-            text: "You will be logged out of the growth console !",
-            type: "warning",
+            title: 'Are you sure?',
+            text: 'You will be logged out of the growth console !',
+            type: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#F44336",
-            confirmButtonText: "Yes, logout!",
+            confirmButtonColor: '#F44336',
+            confirmButtonText: 'Yes, logout!',
             closeOnConfirm: false
         }, function() {
-            console.log("Log out :: Show Sign in Screen Again here");
+            console.log('Log out :: Show Sign in Screen Again here');
         });
     }
 
@@ -323,22 +455,23 @@ materialAdmin
 
         //Get confirmation, if confirmed clear the localStorage
         swal({
-            title: "Are you sure?",
-            text: "All your saved localStorage values will be removed",
-            type: "warning",
+            title: 'Are you sure?',
+            text: 'All your saved localStorage values will be removed',
+            type: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#F44336",
-            confirmButtonText: "Yes, delete it!",
+            confirmButtonColor: '#F44336',
+            confirmButtonText: 'Yes, delete it!',
             closeOnConfirm: false
         }, function() {
             localStorage.clear();
-            swal("Done!", "localStorage is cleared", "success");
+            swal('Done!', 'localStorage is cleared', 'success');
         });
 
     }
 
     //Fullscreen View
     this.fullScreen = function() {
+
         //Launch
         function launchIntoFullscreen(element) {
             if (element.requestFullscreen) {
@@ -372,13 +505,12 @@ materialAdmin
 
 })
 
-
-
 // =========================================================================
 // Best Selling Widget
 // =========================================================================
 
 .controller('bestsellingCtrl', function(bestsellingService) {
+
     // Get Best Selling widget Data
     this.img = bestsellingService.img;
     this.name = bestsellingService.name;
@@ -386,7 +518,6 @@ materialAdmin
 
     this.bsResult = bestsellingService.getBestselling(this.img, this.name, this.range);
 })
-
 
 // =========================================================================
 // Todo List Widget
@@ -403,7 +534,6 @@ materialAdmin
     this.addTodoStat = false;
 })
 
-
 // =========================================================================
 // Recent Items Widget
 // =========================================================================
@@ -417,7 +547,6 @@ materialAdmin
 
     this.riResult = recentitemService.getRecentitem(this.id, this.name, this.price);
 })
-
 
 // =========================================================================
 // Recent Posts Widget
@@ -433,7 +562,6 @@ materialAdmin
     this.rpResult = recentpostService.getRecentpost(this.img, this.user, this.text);
 })
 
-
 //=================================================
 // Profile
 //=================================================
@@ -443,26 +571,25 @@ materialAdmin
     //Get Profile Information from profileService Service
 
     //User
-    this.profileSummary = "Sed eu est vulputate, fringilla ligula ac, maximus arcu. Donec sed felis vel magna mattis ornare ut non turpis. Sed id arcu elit. Sed nec sagittis tortor. Mauris ante urna, ornare sit amet mollis eu, aliquet ac ligula. Nullam dolor metus, suscipit ac imperdiet nec, consectetur sed ex. Sed cursus porttitor leo.";
+    this.profileSummary = 'Sed eu est vulputate, fringilla ligula ac, maximus arcu. Donec sed felis vel magna mattis ornare ut non turpis. Sed id arcu elit. Sed nec sagittis tortor. Mauris ante urna, ornare sit amet mollis eu, aliquet ac ligula. Nullam dolor metus, suscipit ac imperdiet nec, consectetur sed ex. Sed cursus porttitor leo.';
 
-    this.fullName = "Hemank Sabharwal";
-    this.gender = "male";
-    this.birthDay = "19/02/1993";
-    this.martialStatus = "Single";
-    this.mobileNumber = "09599556442";
-    this.emailAddress = "hemank@hike.in";
-    this.twitter = "@hemank-s";
-    this.twitterUrl = "twitter.com/hemank-s";
-    this.skype = "hemank.sabharwal";
-    this.addressSuite = "22, Baker Street";
-    this.addressCity = "Vasant Kunj, Delhi";
-    this.addressCountry = "India";
+    this.fullName = 'Hemank Sabharwal';
+    this.gender = 'male';
+    this.birthDay = '19/02/1993';
+    this.martialStatus = 'Single';
+    this.mobileNumber = '09599556442';
+    this.emailAddress = 'hemank@hike.in';
+    this.twitter = '@hemank-s';
+    this.twitterUrl = 'twitter.com/hemank-s';
+    this.skype = 'hemank.sabharwal';
+    this.addressSuite = '22, Baker Street';
+    this.addressCity = 'Vasant Kunj, Delhi';
+    this.addressCountry = 'India';
 
     //Edit
     this.editSummary = 0;
     this.editInfo = 0;
     this.editContact = 0;
-
 
     this.submit = function(item, message) {
         if (item === 'profileSummary') {
@@ -482,8 +609,6 @@ materialAdmin
 
 })
 
-
-
 //=================================================
 // LOGIN
 //=================================================
@@ -497,14 +622,13 @@ materialAdmin
     this.forgot = 0;
 })
 
-
 //=================================================
 // CALENDAR
 //=================================================
 
 .controller('calendarCtrl', function($modal) {
 
-    //Create and add Action button with dropdown in Calendar header. 
+    //Create and add Action button with dropdown in Calendar header.
     this.month = 'month';
 
     this.actionMenu = '<ul class="actions actions-alt" id="fc-actions">' +
@@ -529,7 +653,6 @@ materialAdmin
         '</ul>' +
         '</div>' +
         '</li>';
-
 
     //Open new event modal on selecting a day
     this.onSelect = function(argStart, argEnd) {
@@ -569,7 +692,7 @@ materialAdmin
         'bgm-orange',
         'bgm-purple',
         'bgm-gray',
-        'bgm-black',
+        'bgm-black'
     ]
 
     //Select Tag
@@ -600,7 +723,7 @@ materialAdmin
         }
     }
 
-    //Dismiss 
+    //Dismiss
     $scope.eventDismiss = function() {
         $modalInstance.dismiss();
     }
@@ -629,7 +752,6 @@ materialAdmin
     this.color4 = '#FFC107';
 })
 
-
 // =========================================================================
 // PHOTO GALLERY
 // =========================================================================
@@ -644,7 +766,7 @@ materialAdmin
         { value: 2, column: 6 },
         { value: 3, column: 4 },
         { value: 4, column: 3 },
-        { value: 1, column: 12 },
+        { value: 1, column: 12 }
     ]
 
     //Change grid
@@ -654,7 +776,6 @@ materialAdmin
     }
 
 })
-
 
 // =========================================================================
 // ANIMATIONS DEMO
@@ -753,11 +874,11 @@ materialAdmin
         { animation: 'zoomOutUp', target: 'zoomExits' }
     ]
 
-    //Animate    
+    //Animate
     this.ca = '';
 
     this.setAnimation = function(animation, target) {
-        if (animation === "hinge") {
+        if (animation === 'hinge') {
             animationDuration = 2100;
         } else {
             animationDuration = 1200;

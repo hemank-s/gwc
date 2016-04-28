@@ -266,7 +266,7 @@ materialAdmin
                 message: message
             },{
                 type: type,
-                allow_dismiss: false,
+                allow_dismiss: true,
                 label: 'Cancel',
                 className: 'btn-xs btn-inverse',
                 placement: {
