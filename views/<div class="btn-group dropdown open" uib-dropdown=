@@ -1,0 +1,10 @@
+<div class="btn-group dropdown open" uib-dropdown="" style="">
+                    <button type="button" class="btn btn-info waves-effect">Info</button>
+                    <button type="button" class="btn btn-info dropdown-toggle waves-effect" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="true">
+                        <span class="caret"></span>
+                        <span class="sr-only">Split button dropdowns</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                       
+                    </ul>
+                </div>

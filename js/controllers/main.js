@@ -93,12 +93,21 @@ materialAdmin
 .controller('SMSInviteController', function($scope, $http) {
 
 
+    $scope.editFlags = [];
+
     $http.get('http://172.16.1.75/getSmsInvite').then(function(response) {
 
         $scope.msg = response.data.msg;
         $scope.region = response.data.region;
+        $scope.dataLoaded = true;
 
-        console.log(response);
+        angular.forEach($scope.msg, function(value, key) {
+            $scope.editFlags[key] = false;
+
+        });
+
+
+        console.log($scope.editFlags);
 
 
     }, function() {
@@ -107,35 +116,113 @@ materialAdmin
 
 
 
-
     $scope.allRegions = {
 
-        "AP": "Andhra Pradesh Telecom Circle, includes Telangana and Yanam district",
-        "AS": "Assam Telecom Circle",
-        "BR": "Bihar and Jharkhand Telecom Circle",
-        "DL": "Delhi Metro Telecom Circle(includes NCR, Faridabad, Ghaziabad, Gurgaon and Noida)",
-        "GJ": "Gujarat Telecom Circle(includes Daman and Diu, Dadra and Nagar Haveli)",
-        "HP": "Himachal Pradesh Telecom Circle",
-        "HR": "Haryana Telecom Circle(excludes Faridabad, Gurgaon and Panchkula)",
-        "JK": "Jammu and Kashmir Telecom Circle",
-        "KL": "Kerala Telecom Circle(includes Lakshadweep and Mahé))",
-        "KA": "Karnataka Telecom Circle",
-        "KO": "Kolkata Metro Telecom Circle(includes parts of Howrah, Hooghly, North and South 24 Parganas and Nadia Districts)",
-        "MH": "Maharashtra Telecom Circle(includes Goa but excludes Mumbai, Navi Mumbai and Kalyan)",
-        "MP": "Madhya Pradesh and Chhattisgarh Telecom Circle",
-        "MU": "Mumbai Metro Telecom Circle(includes Navi Mumbai and Kalyan)",
-        "NE": "North East India Telecom Circle(includes Arunachal Pradesh, Meghalaya, Mizoram, Nagaland, Manipur and Tripura)",
-        "OR": "Odisha Telecom Circle",
-        "PB": "Punjab Telecom Circle(includes Chandigarh and Panchkula)",
-        "RJ": "Rajasthan Telecom Circle",
-        "TN": "Tamil Nadu Telecom Circle(includes Puducherry except Yanam and Mahé)",
-        "UE": "Uttar Pradesh(East) Telecom Circle",
-        "UW": "Uttar Pradesh(West) and Uttarakhand Telecom Circle(excludes Ghaziabad and Noida)",
-        "WB": "West"
+        "AP": "Andhra Pradesh ",
+        "AS": "Assam",
+        "BR": "Bihar and Jharkhand",
+        "DL": "Delhi NCR",
+        "GJ": "Gujarat ",
+        "HP": "Himachal Pradesh",
+        "HR": "Haryana ",
+        "JK": "Jammu and Kashmir ",
+        "KL": "Kerala ",
+        "KA": "Karnataka",
+        "KO": "Kolkata ",
+        "MH": "Maharashtra",
+        "MP": "Madhya Pradesh and Chhattisgarh ",
+        "MU": "Mumbai",
+        "NE": "North East India ",
+        "OR": "Odisha",
+        "PB": "Punjab",
+        "RJ": "Rajasthan",
+        "TN": "Tamil Nadu",
+        "UE": "Uttar Pradesh(East)",
+        "UW": "Uttar Pradesh(West)",
+        "WB": "West",
+        "NON_IND": "Non India",
+        "IND": "India",
+        "CH": "Chennai"
+
     };
 
 
+    $scope.linkRegion = function(messageId, regionPrefix) {
 
+        if (angular.isArray($scope.region[regionPrefix]))
+            $scope.region[regionPrefix].push(messageId)
+        else {
+            $scope.region[regionPrefix] = [messageId];
+        }
+
+    }
+
+
+    $scope.unlinkRegion = function(messageId, regionPrefix) {
+
+        var index = $scope.region[regionPrefix].indexOf(messageId);
+        $scope.region[regionPrefix].splice(index, 1);
+    }
+
+    $scope.addMessage = function() {
+
+        var messageId = $scope.findMax(Object.keys($scope.msg)) + 1;
+        $scope.msg[messageId] = '';
+        $scope.editFlags[messageId] = true;
+
+    }
+
+    $scope.findMax = function(arr) {
+
+        var max = 0;
+        for (var i = 0; i < arr.length; i++)
+            if (parseInt(arr[i]) > max)
+                max = parseInt(arr[i]);
+
+        return max;
+    }
+
+
+    $scope.delete = function(messageId) {
+        var index;
+        delete $scope.msg[messageId];
+        angular.forEach($scope.region, function(value, key) {
+
+            index = value.indexOf(messageId);
+            if (index != -1)
+                value.splice(index, 1);
+        });
+    }
+
+
+    $scope.changeMessage = function(messageId, message) {
+
+        $scope.editFlags[messageId] = false;
+        $scope.msg[messageId] = message;
+
+    }
+
+    $scope.submit = function(messageId) {
+        var dataToSend = {};
+
+        dataToSend.msg = $scope.msg;
+        dataToSend.region = $scope.region;
+
+        dataToSend = { "message": dataToSend };
+
+
+        console.log(dataToSend);
+
+        $http.post('http://172.16.1.75/postSmsInvite', dataToSend).then(function(response) {
+
+            console.log(response);
+
+        }, function() {
+            alert('Something went wrong')
+        });
+
+
+    }
 
 })
 

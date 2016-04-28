@@ -5,25 +5,72 @@
     <aside id="chat" data-ng-include="'template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
     <section id="content">
         <div class="container">
-            <div class="card">
+            <div class="card" data-ng-controller="SMSInviteController">
                 <div class="card-header ch-alt">
-                    <h2> Existing SMs invites </h2>
+                    <h2 style="display:inline-block;"> Existing SMS invites </h2>
+                    <button class="btn btn-primary waves-effect" ng-click="submit()" ng-show="dataLoaded == true" style="float:right;">
+                        SAVE & SUBMIT </button>
                 </div>
                 <div class="card-body card-padding">
-                    <table data-ng-controller="SMSInviteController">
-                        <tr ng-repeat="(key1, value1) in msg">
-                            <td style="border:1px solid black;">{{value1}}
-                                <span arr="{{value2}}" key="{{key1}}" ng-repeat="(key2,value2) in region"> 
-                          <span  ng-repeat="test in value2" ng-show="test == key1">  
-                            {{key2 | abbreviateRegion:allRegions}}
-                	 	 </span>
-                                </span>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-vmiddle">
+                            <tr>
+                                <th> S.No </th>
+                                <th> Message </th>
+                                <th> &nbsp </th>
+                                <th> Regions Linked </th>
+                                <th> </th>
+                                <th> </th>
+                            </tr>
+                            <tr ng-repeat="(key1, value1) in msg">
+                                <td data-title="Message" style="border:1px solid black;">
+                                    <span>{{$index+1}}</span>
+                                </td>
+                                <td data-title="Message" style="border:1px solid black;">
+                                    <span ng-show="editFlags[key1] == false">{{value1}}</span>
+                                    <div ng-show="editFlags[key1] == true">
+                                        <input class="form-control" type="text" ng-model="value1" />
+                                    </div>
+                                </td>
+                                <td style="align:left">
+                                    <button type="button" class="btn btn-default" ng-show="editFlags[key1] == false" ng-click="editFlags[key1] = true">
+                                        <i class="zmdi zmdi-edit"></i></button>
+                                    <button type="button" class="btn btn-success" ng-show="editFlags[key1] == true" ng-click="changeMessage(key1,value1)">
+                                        <i class="zmdi zmdi-check"></i></button>
+                                </td>
+                                <td data-title="Regions">
+                                    <span arr="{{value2}}" key="{{key1}}" ng-repeat="(key2,value2) in region"> 
+			                          <span data-test="{{test}}" data-key="{{key1}}" ng-repeat="test in value2" ng-show="test == key1">  
+			                          	<button style="margin:3px;" class="btn btn-primary btn-sm waves-effect">{{key2 | abbreviateRegion:allRegions}}  <span ng-show="editFlags[key1] == true" class="unlinkRegion" ng-click="unlinkRegion(key1,key2)"> X </span></button>
+                                    </span>
+                                    </span>
+                                </td>
+                                <td width="25%" data-title="Add Regions" style="align:right">
+                                    <div class="btn-group dropdown open" uib-dropdown="" style="">
+                                        <button type="button" class="btn btn-info waves-effect">Add region</button>
+                                        <button type="button" class="btn btn-info dropdown-toggle waves-effect" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="true">
+                                            <span class="caret"></span>
+                                            <span class="sr-only"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li data-ng-repeat="(regPrefix, regName) in allRegions" class="ng-scope">
+                                                <a ng-click="linkRegion(key1,regPrefix)" class="ng-binding"> {{regName}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="" ng-click="delete(key1)" style="font-size:24px" tooltip-placement="bottom" uib-tooltip="Delete" class="zmdi zmdi-delete zmdi-hc-fw"></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary waves-effect" ng-click="addMessage()" ng-show="dataLoaded == true" style="margin-top:5px">ADD </button>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 </section>
-<footer id="footer" data-ng-include="'template/footer.html'"></footer>
+<footer id=" footer " data-ng-include=" 'template/footer.html' "></footer>
