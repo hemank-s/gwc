@@ -117,14 +117,43 @@ materialAdmin
 
     $scope.logsHeader = null;
     $scope.logsData = logsData;
-    $scope.logsType = logsData.logType;
+    $scope.logType = logsData.logType;
+    $scope.showModal = false;
+    $scope.appData = null;
 
-    if ($scope.logsType == 'll')
+    if ($scope.logType == 'll')
         $scope.logsHeader = 'Location Logs';
-    else if ($scope.logsType == 'pl')
+    else if ($scope.logType == 'pl')
         $scope.logsHeader = 'Phone Logs';
-    else if ($scope.logsType == 'cl')
-        $scope.logsHeader = 'Call Logs';
+    else if ($scope.logType == 'al')
+        $scope.logsHeader = 'Application Logs';
+
+    delete logsData.logType;
+
+
+    $scope.showModal = function(dataArr) {
+        // swal({
+        //     title: 'List of Apps',
+        //     text: dataArr.toString(),
+        //     type: 'basic',
+        //     showCancelButton: false,
+        //     confirmButtonColor: '#F44336 ',
+        //     confirmButtonText: 'OK',
+        //     closeOnConfirm: true
+        // }, function() {
+
+
+        // });
+
+
+
+        swal({
+            title: 'List of Apps',
+            text: dataArr.toString(),
+            html: true
+        });
+
+    }
 
 
 
