@@ -95,14 +95,16 @@ materialAdmin
 //     console.log(data);
 // }])
 
-.controller('emStatController', ['name','$scope',function (name, $scope) {
-    
+
+.controller('emStatController', ['name', '$scope', function(name, $scope) {
+
     console.log("data received is from em stats fetch is :-");
     console.log(name);
-    
+
     $scope.userList = name;
-    $scope.displayUserStats = function(user){
-    
+    $scope.displayUserStats = function(user) {
+
+
         delete user.stat;
         console.log(user);
         $scope.userStats = user;
@@ -110,6 +112,26 @@ materialAdmin
 
 
 }])
+
+.controller('logsViewController', ['logsData', '$scope', function(logsData, $scope) {
+
+    $scope.logsHeader = null;
+    $scope.logsData = logsData;
+    $scope.logsType = logsData.logType;
+
+    if ($scope.logsType == 'll')
+        $scope.logsHeader = 'Location Logs';
+    else if ($scope.logsType == 'pl')
+        $scope.logsHeader = 'Phone Logs';
+    else if ($scope.logsType == 'cl')
+        $scope.logsHeader = 'Call Logs';
+
+
+
+
+}])
+
+
 
 
 .controller('homeController', function($scope, $location, $http, growlService, $state) {
@@ -129,7 +151,7 @@ materialAdmin
 
         if ($scope.filePresent) {
             console.log('CSV file is present');
-            
+
             formdata.append('batchSize', $scope.batchSize);
 
             $http({
@@ -141,7 +163,7 @@ materialAdmin
                 })
                 .success(function(data) {
                     console.log(data);
-                    $state.go('emresults', { name : data});
+                    $state.go('emresults', { name: data });
                 });
 
 
@@ -159,7 +181,9 @@ materialAdmin
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 })
                 .success(function(data) {
-                    $state.go('emresults', { name : data});
+
+
+                    $state.go('emresults', { name: data });
                     // if (data.stat == 'ok') {
                     //     $scope.msisdn = '';
                     //     growlService.growl('Data received Successfully !', 'success');
@@ -182,6 +206,80 @@ materialAdmin
         // Set the File Present as True/False Depending on the Form data has been picked or not
         $scope.filePresent = true;
     };
+
+
+    // Fetch logs
+
+    $scope.fetchLogs = function() {
+        $scope.msisdn = "911151151151";
+        console.log('Fetching logs for the user');
+
+        var url = '';
+
+        if (typeof $scope.logType == 'undefined') {
+            growlService.growl('Please select at least one log !', 'danger');
+            return;
+        }
+
+        if ($scope.logType == "ll")
+            url = "/getLocationLogs";
+        else if ($scope.logType == "pl")
+            url = "/getPhoneLogs";
+        else if ($scope.logType == "al")
+            url = "/getApps";
+
+        url = "http://172.16.1.75" + url;
+
+
+        if ($scope.filePresent) {
+            $http({
+                    method: 'POST',
+                    url: url,
+                    data: formdata, //forms user object
+                    headers: { 'Content-Type': undefined },
+                    transformRequest: angular.identity
+                })
+                .success(function(data) {
+                    console.log(data);
+                    if (data.stat == 'ok') {
+                        data.logType = $scope.logType;
+                        $state.go('logsView', { logsData: data });
+                    } else
+                        growlService.growl('Error fetching logs, try again !', 'danger');
+                });
+
+        } else {
+
+            if (!$scope.msisdn) {
+                growlService.growl('Please enter MSISDN  !', 'danger');
+                return;
+            }
+
+
+
+            var userList = $scope.msisdn; // User List of msisdn's comma seperated
+            var formDataToSend = {};
+            formDataToSend.userList = userList;
+
+            $http({
+                    method: 'POST',
+                    url: url,
+                    data: $.param(formDataToSend), //forms user object
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                .success(function(data) {
+                    console.log(data);
+                    //  if (data.stat == 'ok') {
+                    data.logType = $scope.logType;
+                    $state.go('logsView', { logsData: data });
+                    //  } else
+                    //    growlService.growl('Error fetching logs, try again !', 'danger');
+                });
+
+        }
+
+    };
+
 
     // Submit The Refresh File Logs Here
     $scope.submitRefreshLogs = function() {
@@ -300,7 +398,7 @@ materialAdmin
 
 .filter('capitalize', function() {
     return function(input) {
-      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+        return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
     };
 })
 
@@ -312,27 +410,9 @@ materialAdmin
     };
 })
 
-.controller('SMSInviteController', function($scope, $http) {
+.controller('SMSInviteController', function($scope, $http, growlService) {
 
     $scope.editFlags = [];
-
-    $http.get('http://172.16.1.75/getSmsInvite').then(function(response) {
-
-        $scope.msg = response.data.msg;
-        $scope.region = response.data.region;
-        $scope.dataLoaded = true;
-
-        angular.forEach($scope.msg, function(value, key) {
-            $scope.editFlags[key] = false;
-
-        });
-
-        console.log($scope.editFlags);
-
-    }, function() {
-        alert('Something went wrong');
-    });
-
     $scope.allRegions = {
 
         'AP': 'Andhra Pradesh ',
@@ -362,6 +442,34 @@ materialAdmin
         'CH': 'Chennai'
 
     };
+
+
+    $scope.disabledSubmit = true;
+
+    $http.get('http://172.16.1.75/getSmsInvite').then(function(response) {
+
+        console.log(response);
+
+        if (response.statusText == "OK") {
+            $scope.msg = response.data.msg;
+            $scope.region = response.data.region;
+            $scope.dataLoaded = true;
+
+            angular.forEach($scope.msg, function(value, key) {
+                $scope.editFlags[key] = false;
+
+            });
+
+        } else
+            growlService.growl('Error while fetching list of SMS invites!', 'danger');
+
+    }, function() {
+        growlService.growl('Error while fetching list of SMS invites!', 'danger');
+    });
+
+
+
+
 
     $scope.linkRegion = function(messageId, regionPrefix) {
 
@@ -409,9 +517,19 @@ materialAdmin
     };
 
     $scope.changeMessage = function(messageId, message) {
-
         $scope.editFlags[messageId] = false;
         $scope.msg[messageId] = message;
+    };
+
+
+    $scope.changeSubmitBtnStatus = function() {
+        $scope.disabledSubmit = false;
+        angular.forEach($scope.editFlags, function(value, key) {
+            if (value == true) {
+                $scope.disabledSubmit = true;
+                return;
+            }
+        });
 
     };
 
@@ -420,17 +538,18 @@ materialAdmin
 
         dataToSend.msg = $scope.msg;
         dataToSend.region = $scope.region;
-
         dataToSend = { 'message': dataToSend };
-
-        console.log(dataToSend);
-
         $http.post('http://172.16.1.75/postSmsInvite', dataToSend).then(function(response) {
+            if (response.data.stat == "ok")
+                growlService.growl('Successfully saved!', 'success');
+            else
+                growlService.growl('Error while saving, try again!', 'danger');
 
-            console.log(response);
+            $scope.disabledSubmit = true;
+
 
         }, function() {
-            alert('Something went wrong');
+            growlService.growl('Error while saving, try again!', 'danger');
         });
 
     };
@@ -609,7 +728,7 @@ materialAdmin
     this.addTodoStat = false;
 })
 
-// =========================================================================
+// === ======================================================================
 // Recent Items Widget
 // =========================================================================
 

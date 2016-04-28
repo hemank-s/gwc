@@ -48,7 +48,8 @@ materialAdmin
 
         .state('typography', {
             url: '/typography',
-            templateUrl: 'views/typography.html'})
+            templateUrl: 'views/typography.html'
+        })
 
         .state('widgets', {
             url: '/widgets',
@@ -63,14 +64,27 @@ materialAdmin
         // EM Results Route
         .state('emresults', {
             url: '/emresults',
-            params: {'name': null},
+            params: { 'name': null },
             templateUrl: 'views/emresults.html',
             controller: 'emStatController',
             resolve: {
-                        name: ['$stateParams', function($stateParams) {
-                            return $stateParams.name;
-                        }]
-                    }    
+                name: ['$stateParams', function($stateParams) {
+                    return $stateParams.name;
+                }]
+            }
+        })
+
+        // EM Results Route
+        .state('logsView', {
+            url: '/logsView',
+            params: { 'logsData': null },
+            templateUrl: 'views/logsView.html',
+            controller: 'logsViewController',
+            resolve: {
+                logsData: ['$stateParams', function($stateParams) {
+                    return $stateParams.logsData;
+                }]
+            }
         })
 
         .state('widgets.widgets', {

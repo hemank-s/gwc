@@ -8,7 +8,7 @@
             <div class="card" data-ng-controller="SMSInviteController">
                 <div class="card-header ch-alt">
                     <h2 style="display:inline-block;"> Existing SMS invites </h2>
-                    <button class="btn btn-primary waves-effect" ng-click="submit()" ng-show="dataLoaded == true" style="float:right;">
+                    <button class="btn btn-primary waves-effect" ng-disabled="disabledSubmit" ng-click="submit()" ng-show="dataLoaded == true" style="float:right;">
                         SAVE & SUBMIT </button>
                 </div>
                 <div class="card-body card-padding">
@@ -33,15 +33,15 @@
                                     </div>
                                 </td>
                                 <td style="align:left">
-                                    <button type="button" class="btn btn-default" ng-show="editFlags[key1] == false" ng-click="editFlags[key1] = true">
+                                    <button type="button" class="btn btn-default" ng-show="editFlags[key1] == false" ng-click="editFlags[key1] = true; disabledSubmit = false;" tooltip-placement="bottom" uib-tooltip="Click to edit message & region linking">
                                         <i class="zmdi zmdi-edit"></i></button>
-                                    <button type="button" class="btn btn-success" ng-show="editFlags[key1] == true" ng-click="changeMessage(key1,value1)">
+                                    <button type="button" class="btn btn-success" ng-show="editFlags[key1] == true" ng-click="changeMessage(key1,value1); changeSubmitBtnStatus();">
                                         <i class="zmdi zmdi-check"></i></button>
                                 </td>
                                 <td data-title="Regions">
                                     <span arr="{{value2}}" key="{{key1}}" ng-repeat="(key2,value2) in region"> 
-			                          <span data-test="{{test}}" data-key="{{key1}}" ng-repeat="test in value2" ng-show="test == key1">  
-			                          	<button style="margin:3px;" class="btn btn-primary btn-sm waves-effect">{{key2 | abbreviateRegion:allRegions}}  <span ng-show="editFlags[key1] == true" class="unlinkRegion" ng-click="unlinkRegion(key1,key2)"> X </span></button>
+                                      <span data-test="{{test}}" data-key="{{key1}}" ng-repeat="test in value2" ng-show="test == key1">  
+                                        <button style="margin:3px;" class="btn btn-primary btn-sm waves-effect">{{key2 | abbreviateRegion:allRegions}}  <span ng-show="editFlags[key1] == true" class="unlinkRegion" ng-click="unlinkRegion(key1,key2)"> X </span></button>
                                     </span>
                                     </span>
                                 </td>
@@ -60,7 +60,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a href="" ng-click="delete(key1)" style="font-size:24px" tooltip-placement="bottom" uib-tooltip="Delete" class="zmdi zmdi-delete zmdi-hc-fw"></a>
+                                    <a href="" ng-click="delete(key1)" style="font-size:24px" tooltip-placement="bottom" uib-tooltip="Click to delete row" class="zmdi zmdi-delete zmdi-hc-fw"></a>
                                 </td>
                             </tr>
                         </table>

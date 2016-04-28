@@ -51,6 +51,45 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-header ch-alt">
+                            <h2>Fetch Logs <small>ENTER MSISDN / GROUP OF MSISDN's / UPLOAD CSV</small></h2>
+                        </div>
+                        <div class="card-body card-padding">
+                            <form name="refreshLogForm" ng-submit="fetchLogs()">
+                                <input type="file" name="csv" ng-files="getTheFiles($files)" style="margin: 0px auto;width: 55%;">
+                                <hr noshade>
+                                <div style="text-align:center;">
+                                    OR
+                                </div>
+                                <br>
+                                <br>
+                                <div class="form-group fg-float m-b-30">
+                                    <div class="fg-line">
+                                        <input type="text" ng-model="msisdn" class="form-control input-sm">
+                                        <label class="fg-label">MSISDN's</label>
+                                    </div>
+                                </div>
+                                <label class="radio radio-inline m-r-20">
+                                    <input type="radio" value="al" name="logType" ng-model="logType">
+                                    <i class="input-helper"></i> Application Logs
+                                </label>
+                                <label class="radio radio-inline m-r-20">
+                                    <input type="radio" value="ll" name="logType" ng-model="logType">
+                                    <i class="input-helper"></i> Location Logs
+                                </label>
+                                <br></br>
+                                <label class="radio radio-inline m-r-20">
+                                    <input type="radio" value="pl" name="logType" ng-model="logType">
+                                    <i class="input-helper"></i> Phone Logs
+                                </label>
+                                <button class="btn btn-info" id="submit" style="margin-top:20px;">Fetch Logs</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Change SMS Invites -->
+                <div class="col-sm-4">
                     <!-- Refresh The Logs Card -->
                     <div class="card">
                         <div class="card-header ch-alt">
