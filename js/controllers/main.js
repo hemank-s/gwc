@@ -120,6 +120,7 @@ materialAdmin
     $scope.logType = logsData.logType;
     $scope.showModal = false;
     $scope.appData = null;
+    $scope.showCards = true;;
 
     if ($scope.logType == 'll')
         $scope.logsHeader = 'Location Logs';
@@ -133,20 +134,26 @@ materialAdmin
 
     $scope.showModal = function(dataArr) {
 
-        var i,j,temparray,chunk = 150;
-        for (i=0,j=dataArr.length; i<j; i+=chunk) {
-            temparray = dataArr.slice(i,i+chunk);
+        var i, j, temparray, chunk = 150;
+        for (i = 0, j = dataArr.length; i < j; i += chunk) {
+            temparray = dataArr.slice(i, i + chunk);
             // do whatever
         }
 
 
         swal({
             title: 'List of Apps',
-            text: temparray.toString()+ '   ' +(dataArr.length - temparray.length)+ '  more' ,
+            text: temparray.toString() + '   ' + (dataArr.length - temparray.length) + '  more',
             html: true
         });
 
-    };
+
+        $scope.showPhoneLogs = function(dataArr) {
+            $scope.showCards = true;
+            $scope.appData = dataArr;
+        }
+    }
+
 }])
 
 
