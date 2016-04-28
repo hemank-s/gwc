@@ -181,7 +181,15 @@ materialAdmin
                 })
                 .success(function(data) {
                     console.log(data);
-                    $state.go('emresults', { name: data });
+                    if(data.stat == "ok"){
+                        $scope.msisdn = '';
+                        $state.go('emresults', { name: data.data });
+
+                    }else{
+                        $scope.msisdn = '';
+                        growlService.growl('Some error occured while fetching records, try again later!', 'danger');
+                    }
+                    
                 });
 
 
@@ -199,16 +207,15 @@ materialAdmin
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 })
                 .success(function(data) {
+                    console.log(data);
+                    if(data.stat == "ok"){
+                        $scope.msisdn = '';
+                        $state.go('emresults', { name: data.data });
 
-
-                    $state.go('emresults', { name: data });
-                    // if (data.stat == 'ok') {
-                    //     $scope.msisdn = '';
-                    //     growlService.growl('Data received Successfully !', 'success');
-                    // } else {
-                    //     $scope.msisdn = '';
-                    //     growlService.growl('Some error occured while fetching records, try again later!', 'danger');
-                    // }
+                    }else{
+                        $scope.msisdn = '';
+                        growlService.growl('Some error occured while fetching records, try again later!', 'danger');
+                    }
                 });
         }
     };
